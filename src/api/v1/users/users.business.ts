@@ -25,7 +25,7 @@ export default class UsersBusiness {
       return res.status(400).json(errors.map(err => err.constraints));
 
     } catch(err) {
-      return res.status(500).json({ message: 'Não foi criar usuário '})
+      return res.status(500).json({ message: 'Não foi possível criar usuário '});
     }
   }
 }
