@@ -1,5 +1,6 @@
 import { IsEmail, Length, MaxLength, MinLength } from "class-validator";
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { BeforeInsert, BeforeUpdate, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import bcrypt from "bcryptjs";
 
 @Entity()
 export default class Users {
@@ -18,4 +19,14 @@ export default class Users {
   @Length(6, 6, { message: 'A senha deve possuir 6 caracteres' })
   @Column()
   password: string;
+
+  @BeforeInsert()
+  @BeforeUpdate()
+  async createHashPassword() {
+    this.password = bcrypt.hashSync(this.password, 8);
+  }
+
+  checkPassword(password: string) {
+    return bcrypt.compareSync(password, this.password);
+  }
 }
