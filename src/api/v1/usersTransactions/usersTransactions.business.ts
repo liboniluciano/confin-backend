@@ -4,6 +4,13 @@ import { getRepository, getTreeRepository } from "typeorm";
 import TypesTransactions from "../../../database/models/TypesTransactions";
 import UsersTransactions from "../../../database/models/UsersTransactions";
 
+export interface TransactionPayload {
+  name: string;
+  value: number;
+  user: any;
+  typeTransaction: any;
+}
+
 export default class UsersTransactionsBusiness {
   async index(req: Request, res: Response) {
     try {
@@ -23,7 +30,7 @@ export default class UsersTransactionsBusiness {
       const repo = getRepository(UsersTransactions);
       const repoTypeTransaction = getRepository(TypesTransactions);
 
-      const { typeTransaction, value }  = req.body;
+      const { name, value, typeTransaction, }  = req.body;
 
       const foundTypeTransaction = await repoTypeTransaction.findOne({
         where: { id: typeTransaction }
@@ -61,7 +68,13 @@ export default class UsersTransactionsBusiness {
             return res.status(401).json({ erro: `Esta despesa é maior que o seu saldo! Saldo disponível: R$ ${balance},00` })
           }
         }
-        const response = await repo.save(userTransaction);
+        const response = await repo.save<TransactionPayload>({
+          name,
+          value,
+          user: req.user.id,
+          typeTransaction
+        });
+
         return res.status(201).json(response);
       }
 
