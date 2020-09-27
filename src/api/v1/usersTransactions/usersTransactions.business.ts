@@ -43,11 +43,13 @@ export default class UsersTransactionsBusiness {
         const { sum: income }  = await repo.createQueryBuilder('ut')
           .select("SUM(ut.value)")
           .where("ut.typeTransaction = 1")
+          .andWhere("ut.user = :id", { id: req.user.id })
           .getRawOne();
 
           const { sum: outcome } = await repo.createQueryBuilder('ut')
           .select("SUM(ut.value)")
           .where("ut.typeTransaction = 2")
+          .andWhere("ut.user = :id", { id: req.user.id })
           .getRawOne();
 
           const balance = income - outcome; 
