@@ -20,7 +20,7 @@ export default class UsersTransactions {
   @JoinColumn({ name: 'user_id' })
   user: Users;
 
-  @ManyToOne(type => TypesTransactions, usersTransactions => UsersTransactions, { eager: true })
+  @ManyToOne(type => TypesTransactions, usersTransactions => UsersTransactions)
   @JoinColumn({ name: 'typeTransaction_id' })
   typeTransaction: TypesTransactions;
 

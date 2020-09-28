@@ -3,6 +3,7 @@ import { Request, Response } from "express";
 import { getRepository, getTreeRepository } from "typeorm";
 import TypesTransactions from "../../../database/models/TypesTransactions";
 import UsersTransactions from "../../../database/models/UsersTransactions";
+import UserTransactionsAdapter from "./userTransactions.adapter";
 
 export interface TransactionPayload {
   name: string;
@@ -15,10 +16,16 @@ export default class UsersTransactionsBusiness {
   async index(req: Request, res: Response) {
     try {
       const repo = getRepository(UsersTransactions);
-      const transactions = await repo.find({ 
-        where:  { user: req.user.id }} 
-      );
-      return res.json(transactions);
+      const transactions = await repo.createQueryBuilder('ut')
+      .select(['ut.name', 'ut.value', 'tt.name'])
+      .innerJoin('ut.typeTransaction', 'tt')
+      .where('ut.user = :id', {id: req.user.id})
+      .getMany();
+      
+      /** Método para formatar o retorno para o front-end */
+      const response = UserTransactionsAdapter.buildResponse(transactions);
+
+      return res.json(response);
 
     } catch(err) {
       return res.status(500).json({ message: 'Não foi possível buscar transações '});
@@ -44,8 +51,6 @@ export default class UsersTransactionsBusiness {
       const errors = await validate(userTransaction);
 
       if(errors.length === 0) {
-        /** Pegar dinamicamente o id do usuario */
-
          /** Recuperando valores income e outcome */
         const { sum: income }  = await repo.createQueryBuilder('ut')
           .select("SUM(ut.value)")

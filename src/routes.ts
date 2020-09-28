@@ -15,7 +15,7 @@ routes.use('/typesTransactions', routeTypesTransactions);
 routes.use('/usersTransactions', routeUsersTransactions);
 routes.use('/balance', routeBalance);
 
-routes.post('/ping', authMiddleware, (req, res) => {
+routes.post('/ping', (req, res) => {
   return res.json({ message: 'Pong'});
 });
 
