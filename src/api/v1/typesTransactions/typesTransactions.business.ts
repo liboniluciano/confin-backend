@@ -1,12 +1,13 @@
 import { validate } from "class-validator";
 import { Request, Response } from "express";
-import { getRepository } from "typeorm";
+import { getCustomRepository } from "typeorm";
 import TypesTransactions from "../../../database/models/TypesTransactions";
+import TypeTransactionsRepository from "./typeTransactions.repository";
 
 export default class TypesTransactionsBusiness {
   async create(req: Request, res: Response) {
     try {
-      const repo = getRepository(TypesTransactions);
+      const repo = getCustomRepository(TypeTransactionsRepository);
       const typeTransaction = repo.create(req.body);
 
       const errors = await validate(typeTransaction);
