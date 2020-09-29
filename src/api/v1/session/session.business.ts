@@ -1,19 +1,20 @@
 import { Request, Response } from "express";
 import jwt from 'jsonwebtoken';
-import { getRepository } from "typeorm";
+import { getCustomRepository } from "typeorm";
 
 import Users from "../../../database/models/Users";
 import authConfig from '../../config/auth';
+import UserRepository from "../users/users.repository";
 
 export default class SessionBusiness {
   async create(req: Request, res: Response) {
-    const repo = getRepository(Users);
+    const repo = getCustomRepository(UserRepository);
     let user: Users | undefined;
 
     try {
       const { mail, password } = req.body;
       
-      user = await repo.findOne({ where: {mail }});
+      user = await repo.findMail(mail);
       if(!user) {
         return res.status(401).json({ message: 'Não foi encontrado nenhum usuário com este e-mail' });
       }

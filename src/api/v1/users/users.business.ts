@@ -18,8 +18,8 @@ export default class UsersBusiness {
       }
 
       if(errors.length === 0) {
-        const response = await repo.createUser(req.body)
-        const { id, name, mail } = response;
+        const response: any = await repo.createUser(user)
+        const { id, name, mail }  = response;
 
         return res.status(201).json({ id, name, mail });
       }
@@ -27,6 +27,7 @@ export default class UsersBusiness {
       return res.status(400).json(errors.map(err => err.constraints));
 
     } catch(err) {
+      console.log(err);
       return res.status(500).json({ message: 'Não foi possível criar usuário '});
     }
   }
