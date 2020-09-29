@@ -1,33 +1,23 @@
 import { Request, Response } from "express";
-import { getRepository } from "typeorm";
-import UsersTransactions from "../../../database/models/UsersTransactions";
+import { getCustomRepository } from "typeorm";
+import TypeTransactionsRepository from "../typesTransactions/typeTransactions.repository";
+import UsersTransactionsRepository from "../usersTransactions/usersTransactions.repository";
 
 class BalanceBusiness{
   async index(req: Request, res: Response) {
     try {
-      const repo = getRepository(UsersTransactions);
+      const repo = getCustomRepository(UsersTransactionsRepository);
 
-      const { sum: income }  = await repo.createQueryBuilder('ut')
-      .select("SUM(ut.value)")
-      .where("ut.typeTransaction = 1")
-      .andWhere("ut.user = :id", {id: req.user.id})
-      .getRawOne();
-
-      const { sum: outcome } = await repo.createQueryBuilder('ut')
-      .select("SUM(ut.value)")
-      .where("ut.typeTransaction = 2")
-      .andWhere("ut.user = :id", {id: req.user.id})
-      .getRawOne();
-
-      console.log('income', income);
-      console.log('outcome', outcome);
-
-      const balance = income - outcome;
+      /** Recuperando valores 1 - income e  2 - outcome */
+      const income: any = await repo.getIncomeOutome(1, req.user.id);
+      const outcome: any  = await repo.getIncomeOutome(2, req.user.id);
+    
+      const balance = income.sum - outcome.sum;
 
       return res.json({ 
         balance: {
-          income: income,
-          outcome: outcome,
+          income: income.sum,
+          outcome: outcome.sum,
           balance: balance
         }
     });
