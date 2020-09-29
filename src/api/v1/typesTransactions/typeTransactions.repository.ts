@@ -12,6 +12,12 @@ export default class TypeTransactionsRepository extends Repository<TypesTransact
   }
 
   public async getTypeTransaction(typeTransaction: number): Promise<TypesTransactions | undefined> {
-    return this.findOne({ where: {id: typeTransaction }});
+    const transaction = await this.findOne({ where: {id: typeTransaction }});
+
+    console.log('transaction', transaction);
+    if(!transaction) {
+      return undefined;
+    }
+    return transaction;
   }
 }

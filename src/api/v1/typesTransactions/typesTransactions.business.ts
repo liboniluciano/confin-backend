@@ -1,10 +1,21 @@
 import { validate } from "class-validator";
 import { Request, Response } from "express";
 import { getCustomRepository } from "typeorm";
-import TypesTransactions from "../../../database/models/TypesTransactions";
 import TypeTransactionsRepository from "./typeTransactions.repository";
 
 export default class TypesTransactionsBusiness {
+  async index(req: Request, res: Response) {
+    try {
+      const repo = getCustomRepository(TypeTransactionsRepository);
+      const response = await repo.getTypeTransactions();
+
+      return res.json(response);
+
+    } catch(err) {  
+      return res.status(500).json({ message: 'Não foi buscar os tipos de transações '});
+    }
+  }
+
   async create(req: Request, res: Response) {
     try {
       const repo = getCustomRepository(TypeTransactionsRepository);
@@ -20,7 +31,6 @@ export default class TypesTransactionsBusiness {
 
     } catch(err) {
       return res.status(500).json({ message: 'Não foi possível criar tipo de transação '});
-
     }
   }
 }

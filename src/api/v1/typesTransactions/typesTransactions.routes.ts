@@ -6,5 +6,6 @@ const routeTypesTransactions = Router();
 const businessTypesTransactions = new TypesTransactionsBusiness();
 
 routeTypesTransactions.post('/', businessTypesTransactions.create);
+routeTypesTransactions.get('/', businessTypesTransactions.index);
 
 export default routeTypesTransactions;

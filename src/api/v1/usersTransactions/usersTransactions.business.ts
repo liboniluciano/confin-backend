@@ -3,6 +3,7 @@ import { Request, Response } from "express";
 import { getCustomRepository, getRepository } from "typeorm";
 import TypesTransactions from "../../../database/models/TypesTransactions";
 import UsersTransactions from "../../../database/models/UsersTransactions";
+import TypeTransactionsRepository from "../typesTransactions/typeTransactions.repository";
 import UsersTransactionsRepository from "./usersTransactions.repository";
 import UserTransactionsAdapter from "./userTransactions.adapter";
 
@@ -38,13 +39,11 @@ export default class UsersTransactionsBusiness {
   async create(req: Request, res: Response) {
     try {
       const repo = getCustomRepository(UsersTransactionsRepository);
-      const repoTypeTransaction = getRepository(TypesTransactions);
+      const repoTypeTransaction = getCustomRepository(TypeTransactionsRepository);
 
       const { name, value, typeTransaction, }  = req.body;
 
-      const foundTypeTransaction = await repoTypeTransaction.findOne({
-        where: { id: typeTransaction }
-      });
+      const foundTypeTransaction = await repoTypeTransaction.getTypeTransaction(typeTransaction);
 
       if(!foundTypeTransaction) {
         return res.status(404).json({ error: 'Este tipo de transação não existe'})
@@ -79,7 +78,6 @@ export default class UsersTransactionsBusiness {
       }
 
     } catch(err) {
-      console.log(err);
       return res.status(500).json({ message: 'Não foi possível criar transação '});
     }
   }
