@@ -1,6 +1,6 @@
 import { validate } from "class-validator";
 import { Request, Response } from "express";
-import { getRepository, getTreeRepository } from "typeorm";
+import { getRepository } from "typeorm";
 import TypesTransactions from "../../../database/models/TypesTransactions";
 import UsersTransactions from "../../../database/models/UsersTransactions";
 import UserTransactionsAdapter from "./userTransactions.adapter";
@@ -15,6 +15,7 @@ export interface TransactionPayload {
 export default class UsersTransactionsBusiness {
   async index(req: Request, res: Response) {
     try {
+
       const repo = getRepository(UsersTransactions);
       const transactions = await repo.createQueryBuilder('ut')
       .select(['ut.name', 'ut.value', 'tt.name'])
@@ -28,6 +29,7 @@ export default class UsersTransactionsBusiness {
       return res.json(response);
 
     } catch(err) {
+      console.log(err.message);
       return res.status(500).json({ message: 'Não foi possível buscar transações '});
     }
   }

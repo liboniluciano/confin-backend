@@ -2,10 +2,9 @@ import { Router } from 'express';
 import routeSession from './api/v1/session/session.routes';
 import routeUsers from './api/v1/users/users.routes';
 
-import authMiddleware from './api/middlewares/auth';
 import routeTypesTransactions from './api/v1/typesTransactions/typesTransactions.routes';
 import routeUsersTransactions from './api/v1/usersTransactions/usersTransactions.routes';
-import routeBalance from './api/v1/balance/balance.business';
+import routeBalance from './api/v1/balance/balance.routes';
 
 const routes = Router();
 

@@ -1,13 +1,45 @@
-import { Router } from 'express';
-import BalanceBusiness from './balance.routes';
+import { Request, Response } from "express";
+import { getRepository } from "typeorm";
+import UsersTransactions from "../../../database/models/UsersTransactions";
 
-import authMiddleware from '../../middlewares/auth';
+class BalanceBusiness{
+  async index(req: Request, res: Response) {
+    try {
+      const repo = getRepository(UsersTransactions);
 
-const routeBalance = Router();
+      const { sum: income }  = await repo.createQueryBuilder('ut')
+      .select("SUM(ut.value)")
+      .where("ut.typeTransaction = 1")
+      .andWhere("ut.user = :id", {id: req.user.id})
+      .getRawOne();
 
-const businessBalance = new BalanceBusiness();
+      const { sum: outcome } = await repo.createQueryBuilder('ut')
+      .select("SUM(ut.value)")
+      .where("ut.typeTransaction = 2")
+      .andWhere("ut.user = :id", {id: req.user.id})
+      .getRawOne();
 
-routeBalance.use(authMiddleware);
-routeBalance.get('/', businessBalance.index);
+      console.log('income', income);
+      console.log('outcome', outcome);
 
-export default routeBalance;
+      const balance = income - outcome;
+
+      console.log('bati em balance');
+
+      return res.json({ 
+        balance: {
+          income: income,
+          outcome: outcome,
+          balance: balance
+        }
+    });
+
+    } catch(err) {
+      console.log(err);
+      return res.status(500).json({ message: 'Falha ao buscar o saldo '});
+      
+    }
+  }
+}
+
+export default BalanceBusiness;
