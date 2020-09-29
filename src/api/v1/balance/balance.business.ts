@@ -24,8 +24,6 @@ class BalanceBusiness{
 
       const balance = income - outcome;
 
-      console.log('bati em balance');
-
       return res.json({ 
         balance: {
           income: income,

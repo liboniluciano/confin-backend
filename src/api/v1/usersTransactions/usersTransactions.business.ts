@@ -1,8 +1,9 @@
 import { validate } from "class-validator";
 import { Request, Response } from "express";
-import { getRepository } from "typeorm";
+import { getCustomRepository, getRepository } from "typeorm";
 import TypesTransactions from "../../../database/models/TypesTransactions";
 import UsersTransactions from "../../../database/models/UsersTransactions";
+import UsersTransactionsRepository from "./usersTransactions.repository";
 import UserTransactionsAdapter from "./userTransactions.adapter";
 
 export interface TransactionPayload {
@@ -12,16 +13,16 @@ export interface TransactionPayload {
   typeTransaction: any;
 }
 
+interface ValueTransaction {
+  sum: string;
+}
+
 export default class UsersTransactionsBusiness {
   async index(req: Request, res: Response) {
     try {
 
-      const repo = getRepository(UsersTransactions);
-      const transactions = await repo.createQueryBuilder('ut')
-      .select(['ut.name', 'ut.value', 'tt.name'])
-      .innerJoin('ut.typeTransaction', 'tt')
-      .where('ut.user = :id', {id: req.user.id})
-      .getMany();
+      const repo = getCustomRepository(UsersTransactionsRepository);
+      const transactions = await repo.getUserTransactions(req.user.id);
       
       /** Método para formatar o retorno para o front-end */
       const response = UserTransactionsAdapter.buildResponse(transactions);
@@ -36,7 +37,7 @@ export default class UsersTransactionsBusiness {
 
   async create(req: Request, res: Response) {
     try {
-      const repo = getRepository(UsersTransactions);
+      const repo = getCustomRepository(UsersTransactionsRepository);
       const repoTypeTransaction = getRepository(TypesTransactions);
 
       const { name, value, typeTransaction, }  = req.body;
@@ -53,20 +54,12 @@ export default class UsersTransactionsBusiness {
       const errors = await validate(userTransaction);
 
       if(errors.length === 0) {
-         /** Recuperando valores income e outcome */
-        const { sum: income }  = await repo.createQueryBuilder('ut')
-          .select("SUM(ut.value)")
-          .where("ut.typeTransaction = 1")
-          .andWhere("ut.user = :id", { id: req.user.id })
-          .getRawOne();
+         /** Recuperando valores 1 - income e  2 - outcome */
+        const income: any = await repo.getIncomeOutome(1, req.user.id);
+        const outcome: any  = await repo.getIncomeOutome(2, req.user.id);
 
-          const { sum: outcome } = await repo.createQueryBuilder('ut')
-          .select("SUM(ut.value)")
-          .where("ut.typeTransaction = 2")
-          .andWhere("ut.user = :id", { id: req.user.id })
-          .getRawOne();
-
-          const balance = income - outcome; 
+        /** Calculando o balance */
+        const balance = income.sum - outcome.sum; 
 
         /** Verificando o tipo da transação */
         if(typeTransaction == 2) {
