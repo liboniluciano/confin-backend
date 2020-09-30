@@ -20,7 +20,7 @@ export default async(req: Request, res: Response, next: NextFunction) => {
     const [, token] = authHeader.split(' ');
     const decoded = await promisify(jwt.verify)(token, authConfig.secret || '');
 
-    const { id, name, mail } = decoded as TokenPayload;
+    const { id, name, mail } = decoded as unknown as TokenPayload;
 
     req.user = {
       id,
