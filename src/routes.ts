@@ -15,7 +15,7 @@ routes.use('/usersTransactions', routeUsersTransactions);
 routes.use('/balance', routeBalance);
 
 routes.post('/ping', (req, res) => {
-  return res.json({ message: 'Pong'});
+  return res.json({ message: 'Pong' });
 });
 
 export default routes;

@@ -1,10 +1,10 @@
-import { Request, Response } from "express";
+import { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
-import { getCustomRepository } from "typeorm";
+import { getCustomRepository } from 'typeorm';
 
-import Users from "../../../database/models/Users";
+import Users from '../../../database/models/Users';
 import authConfig from '../../config/auth';
-import UserRepository from "../users/users.repository";
+import UserRepository from '../users/users.repository';
 
 export default class SessionBusiness {
   async create(req: Request, res: Response) {
@@ -13,14 +13,20 @@ export default class SessionBusiness {
 
     try {
       const { mail, password } = req.body;
-      
+
       user = await repo.findMail(mail);
-      if(!user) {
-        return res.status(401).json({ message: 'Não foi encontrado nenhum usuário com este e-mail' });
+      if (!user) {
+        return res
+          .status(401)
+          .json({
+            message: 'Não foi encontrado nenhum usuário com este e-mail',
+          });
       }
 
-      if(!user.checkPassword(password)) {
-        return res.status(401).json({ message: 'A senha não corresponde a correta' });
+      if (!user.checkPassword(password)) {
+        return res
+          .status(401)
+          .json({ message: 'A senha não corresponde a correta' });
       }
 
       const { id, name } = user;
@@ -28,17 +34,18 @@ export default class SessionBusiness {
       return res.json({
         user: {
           id,
-          name, 
-          mail
+          name,
+          mail,
         },
-        token: jwt.sign({ id, name, mail }, authConfig.secret || "", {
-          expiresIn: authConfig.expiresIn
+        token: jwt.sign({ id, name, mail }, authConfig.secret || '', {
+          expiresIn: authConfig.expiresIn,
         }),
       });
-
-    } catch(err) {
+    } catch (err) {
       console.log(err);
-      return res.status(500).json({ message:  'Falha ao gerar token para autenticação'});
+      return res
+        .status(500)
+        .json({ message: 'Falha ao gerar token para autenticação' });
     }
   }
 }

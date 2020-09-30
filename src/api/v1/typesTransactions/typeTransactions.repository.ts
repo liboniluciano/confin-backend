@@ -1,9 +1,13 @@
-import { EntityRepository, Repository } from "typeorm";
-import TypesTransactions from "../../../database/models/TypesTransactions";
+import { EntityRepository, Repository } from 'typeorm';
+import TypesTransactions from '../../../database/models/TypesTransactions';
 
 @EntityRepository(TypesTransactions)
-export default class TypeTransactionsRepository extends Repository<TypesTransactions> {
-  public async createTypeTransactions(typeTransactions: TypesTransactions): Promise<TypesTransactions> {
+export default class TypeTransactionsRepository extends Repository<
+  TypesTransactions
+> {
+  public async createTypeTransactions(
+    typeTransactions: TypesTransactions
+  ): Promise<TypesTransactions> {
     return await this.save(typeTransactions);
   }
 
@@ -11,11 +15,13 @@ export default class TypeTransactionsRepository extends Repository<TypesTransact
     return await this.find();
   }
 
-  public async getTypeTransaction(typeTransaction: number): Promise<TypesTransactions | undefined> {
-    const transaction = await this.findOne({ where: {id: typeTransaction }});
+  public async getTypeTransaction(
+    typeTransaction: number
+  ): Promise<TypesTransactions | undefined> {
+    const transaction = await this.findOne({ where: { id: typeTransaction } });
 
     console.log('transaction', transaction);
-    if(!transaction) {
+    if (!transaction) {
       return undefined;
     }
     return transaction;

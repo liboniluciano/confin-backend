@@ -13,22 +13,25 @@ export default class UsersBusiness {
 
       const foundMail = await repo.findMail(req.body.mail);
 
-      if(foundMail) {
-        return res.status(400).json({ message: 'Existe um usuário cadastrado com este e-mail' });
+      if (foundMail) {
+        return res
+          .status(400)
+          .json({ message: 'Existe um usuário cadastrado com este e-mail' });
       }
 
-      if(errors.length === 0) {
-        const response: any = await repo.createUser(user)
-        const { id, name, mail }  = response;
+      if (errors.length === 0) {
+        const response: any = await repo.createUser(user);
+        const { id, name, mail } = response;
 
         return res.status(201).json({ id, name, mail });
       }
 
-      return res.status(400).json(errors.map(err => err.constraints));
-
-    } catch(err) {
+      return res.status(400).json(errors.map((err) => err.constraints));
+    } catch (err) {
       console.log(err);
-      return res.status(500).json({ message: 'Não foi possível criar usuário '});
+      return res
+        .status(500)
+        .json({ message: 'Não foi possível criar usuário ' });
     }
   }
 }

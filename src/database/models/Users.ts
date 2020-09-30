@@ -1,7 +1,15 @@
-import { IsEmail, Length, MaxLength, MinLength } from "class-validator";
-import { BeforeInsert, BeforeUpdate, Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import bcrypt from "bcryptjs";
-import UsersTransactions from "./UsersTransactions";
+import { IsEmail, Length, MaxLength, MinLength } from 'class-validator';
+import {
+  BeforeInsert,
+  BeforeUpdate,
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import bcrypt from 'bcryptjs';
+import UsersTransactions from './UsersTransactions';
 
 @Entity()
 export default class Users {
@@ -13,7 +21,7 @@ export default class Users {
   @Column()
   name: string;
 
-  @IsEmail({}, { message: 'Você deve inserir um e-mail válido'})
+  @IsEmail({}, { message: 'Você deve inserir um e-mail válido' })
   @Column()
   mail: string;
 
@@ -21,7 +29,7 @@ export default class Users {
   @Column()
   password: string;
 
-  @OneToMany(type => UsersTransactions, user => Users)
+  @OneToMany((type) => UsersTransactions, (user) => Users)
   usersTransactions: UsersTransactions[];
 
   @BeforeInsert()
