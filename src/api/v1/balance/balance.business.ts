@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import { getCustomRepository } from "typeorm";
-import TypeTransactionsRepository from "../typesTransactions/typeTransactions.repository";
 import UsersTransactionsRepository from "../usersTransactions/usersTransactions.repository";
 
 class BalanceBusiness{
@@ -16,8 +15,8 @@ class BalanceBusiness{
 
       return res.json({ 
         balance: {
-          income: income.sum,
-          outcome: outcome.sum,
+          income: income.sum ? income.sum: 0,
+          outcome: outcome.sum? outcome.sum: 0,
           balance: balance
         }
     });
